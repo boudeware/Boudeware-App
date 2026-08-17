@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Boudeware",
+    "slug": "boudeware",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": { "backgroundColor": "#090909" },
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.boudeware.app" },
+    "android": { "package": "com.boudeware.app" }
+  }
+}
