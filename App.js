@@ -12,8 +12,17 @@ const episodes = [
   { number: 1, title: 'Épisode 01', theme: "LET'S DANCE", duration: '30 min', youtube: 'https://youtu.be/X9_M-nknjzY' },
   { number: 2, title: 'Épisode 02', theme: "LET'S DANCE", duration: '30 min', youtube: 'https://youtu.be/rraAZOn--tI' },
   { number: 3, title: 'Épisode 03', theme: "LET'S DANCE", duration: '30 min', youtube: 'https://youtu.be/0Gv4AwJSZEg' },
-  ...Array.from({ length: 10 }, (_, index) => ({ number: index + 4, title: `Épisode ${String(index + 4).padStart(2, '0')}`, theme: index < 2 ? "LET'S DANCE" : index < 6 ? "LET'S FLY" : "LET'S FIGHT", duration: '30 min' })),
+  { number: 4, title: 'Épisode 04', theme: "LET'S DANCE", duration: '30 min', youtube: 'https://youtu.be/NxTVCRQLt1Y' },
+  ...Array.from({ length: 9 }, (_, index) => ({ number: index + 5, title: `Épisode ${String(index + 5).padStart(2, '0')}`, theme: index < 1 ? "LET'S DANCE" : index < 5 ? "LET'S FLY" : "LET'S FIGHT", duration: '30 min' })),
 ];
+
+async function playEpisode(url) {
+  try {
+    await Linking.openURL(url);
+  } catch (error) {
+    console.warn('Unable to open YouTube URL', error);
+  }
+}
 
 export default function App() {
   const [screen, setScreen] = useState('home');
@@ -32,16 +41,17 @@ export default function App() {
           {episodes.map((episode) => (
             <TouchableOpacity
               key={episode.number}
-              style={styles.episodeRow}
+              style={[styles.episodeRow, !episode.youtube && styles.disabledRow]}
               disabled={!episode.youtube}
-              onPress={() => episode.youtube && Linking.openURL(episode.youtube)}
+              onPress={() => episode.youtube && playEpisode(episode.youtube)}
+              activeOpacity={episode.youtube ? 0.7 : 1}
             >
               <View style={styles.number}><Text style={styles.numberText}>{String(episode.number).padStart(2, '0')}</Text></View>
               <View style={styles.episodeCopy}>
                 <Text style={styles.episodeRowTitle}>{episode.title}</Text>
                 <Text style={styles.episodeRowMeta}>{episode.theme} · {episode.duration}</Text>
               </View>
-              <Text style={[styles.play, !episode.youtube && styles.locked]}>{episode.youtube ? '▶' : '•'}</Text>
+              <Text style={[styles.play, !episode.youtube && styles.locked]}>{episode.youtube ? '▶' : 'À venir'}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -58,7 +68,7 @@ export default function App() {
           <Text style={styles.logo}>BOUDEWARE</Text>
           <Text style={styles.tagline}>Une divertissante revue d'histoire culturelle.</Text>
           <Text style={styles.meta}>4 générations · 3 thèmes · 13 épisodes · 30 minutes</Text>
-          <TouchableOpacity style={styles.button} onPress={() => setScreen('episodes')}>
+          <TouchableOpacity style={styles.button} onPress={() => setScreen('episodes')} activeOpacity={0.8}>
             <Text style={styles.buttonText}>EXPLORER LA SAISON 1</Text>
           </TouchableOpacity>
         </View>
@@ -75,7 +85,7 @@ export default function App() {
           </TouchableOpacity>
         ))}
 
-        <TouchableOpacity style={styles.episode} onPress={() => setScreen('episodes')}>
+        <TouchableOpacity style={styles.episode} onPress={() => setScreen('episodes')} activeOpacity={0.85}>
           <Text style={styles.episodeLabel}>À L'AFFICHE</Text>
           <Text style={styles.episodeTitle}>SAISON 1</Text>
           <Text style={styles.episodeText}>13 épisodes pour traverser quatre générations de culture, de musique, d'images et d'idées.</Text>
@@ -113,11 +123,12 @@ const styles = StyleSheet.create({
   pageTitle: { color: '#fff', fontSize: 34, fontWeight: '900', letterSpacing: -1, marginBottom: 10 },
   pageIntro: { color: '#999', fontSize: 15, lineHeight: 22, marginBottom: 24 },
   episodeRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#151515', borderRadius: 10, padding: 14, marginBottom: 9, borderWidth: 1, borderColor: '#252525' },
+  disabledRow: { opacity: 0.65 },
   number: { width: 44, height: 44, borderRadius: 6, backgroundColor: '#242424', alignItems: 'center', justifyContent: 'center' },
   numberText: { color: '#f4c542', fontSize: 15, fontWeight: '900' },
   episodeCopy: { flex: 1, paddingHorizontal: 14 },
   episodeRowTitle: { color: '#fff', fontSize: 16, fontWeight: '800' },
   episodeRowMeta: { color: '#777', fontSize: 11, marginTop: 5 },
   play: { color: '#f4c542', fontSize: 13, paddingHorizontal: 5 },
-  locked: { color: '#555' },
+  locked: { color: '#555', fontSize: 10 },
 });
