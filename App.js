@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 const themes = [
@@ -8,12 +8,12 @@ const themes = [
   { title: "LET'S FIGHT", subtitle: 'Résilience • Force', symbol: '✦' },
 ];
 
-const episodes = Array.from({ length: 13 }, (_, index) => ({
-  number: index + 1,
-  title: `Épisode ${String(index + 1).padStart(2, '0')}`,
-  theme: index < 5 ? "LET'S DANCE" : index < 9 ? "LET'S FLY" : "LET'S FIGHT",
-  duration: '30 min',
-}));
+const episodes = [
+  { number: 1, title: 'Épisode 01', theme: "LET'S DANCE", duration: '30 min', youtube: 'https://youtu.be/X9_M-nknjzY' },
+  { number: 2, title: 'Épisode 02', theme: "LET'S DANCE", duration: '30 min', youtube: 'https://youtu.be/rraAZOn--tI' },
+  { number: 3, title: 'Épisode 03', theme: "LET'S DANCE", duration: '30 min', youtube: 'https://youtu.be/0Gv4AwJSZEg' },
+  ...Array.from({ length: 10 }, (_, index) => ({ number: index + 4, title: `Épisode ${String(index + 4).padStart(2, '0')}`, theme: index < 2 ? "LET'S DANCE" : index < 6 ? "LET'S FLY" : "LET'S FIGHT", duration: '30 min' })),
+];
 
 export default function App() {
   const [screen, setScreen] = useState('home');
@@ -30,13 +30,18 @@ export default function App() {
           <Text style={styles.pageTitle}>LES 13 ÉPISODES</Text>
           <Text style={styles.pageIntro}>Quatre générations. Trois univers. Une revue d'histoire culturelle.</Text>
           {episodes.map((episode) => (
-            <TouchableOpacity key={episode.number} style={styles.episodeRow}>
+            <TouchableOpacity
+              key={episode.number}
+              style={styles.episodeRow}
+              disabled={!episode.youtube}
+              onPress={() => episode.youtube && Linking.openURL(episode.youtube)}
+            >
               <View style={styles.number}><Text style={styles.numberText}>{String(episode.number).padStart(2, '0')}</Text></View>
               <View style={styles.episodeCopy}>
                 <Text style={styles.episodeRowTitle}>{episode.title}</Text>
                 <Text style={styles.episodeRowMeta}>{episode.theme} · {episode.duration}</Text>
               </View>
-              <Text style={styles.play}>▶</Text>
+              <Text style={[styles.play, !episode.youtube && styles.locked]}>{episode.youtube ? '▶' : '•'}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -114,4 +119,5 @@ const styles = StyleSheet.create({
   episodeRowTitle: { color: '#fff', fontSize: 16, fontWeight: '800' },
   episodeRowMeta: { color: '#777', fontSize: 11, marginTop: 5 },
   play: { color: '#f4c542', fontSize: 13, paddingHorizontal: 5 },
+  locked: { color: '#555' },
 });
